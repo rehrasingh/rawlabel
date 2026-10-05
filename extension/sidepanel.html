@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RawLabel</title>
+    <link rel="stylesheet" href="sidepanel.css" />
+    <style>.debug-record{border-bottom:1px solid #dedbd2;padding:9px 0}.debug-record strong{display:block;font-size:10px}.debug-record small{display:block;color:#788078;font:8px 'DM Mono';line-height:1.4;margin-top:3px;word-break:break-all}.debug-record pre{white-space:pre-wrap;max-height:160px;overflow:auto;background:#f0eee7;padding:7px;font:8px/1.35 'DM Mono';color:#58635a;margin:7px 0 0}.debug-record ul{margin:6px 0 0;padding-left:14px;font-size:9px;color:#984d3d}</style>
+  </head>
+  <body>
+    <header class="panel-header"><a class="brand" href="#"><span class="brand-mark">R</span><span>rawlabel<span class="dot">.</span></span></a><span class="header-status" id="header-status">READY</span></header>
+    <main>
+      <section class="intro"><span class="eyebrow">CURRENT PAGE</span><h1>See past the<br /><em>marketing.</em></h1><p id="page-label">Open a food product page, then analyze it here.</p><button class="analyze-button" id="analyze-button">Analyze current page <span>→</span></button><p class="permission-note">RawLabel reads the rendered page only after you click Analyze.</p></section>
+      <div class="error-box" id="error-box" hidden></div>
+      <section class="result" id="result" hidden></section>
+    </main>
+    <footer><a href="http://localhost:4173" target="_blank" rel="noreferrer">Open full RawLabel dashboard ↗</a><span>Evidence first · Unknown is valid</span></footer>
+    <script src="sidepanel.js"></script>
+  </body>
+</html>

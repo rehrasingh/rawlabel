@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f1e8" />
+    <title>RawLabel — See past the marketing</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .sidebar { display: none; }
+      .topbar { height: 82px; padding: 0 6.5vw; background: rgba(245,241,232,.96); position: sticky; top: 0; z-index: 4; }
+      .site-brand { display: flex; align-items: center; gap: 9px; color: var(--ink); font: 700 21px 'Space Grotesk',sans-serif; letter-spacing: -1px; text-decoration: none; }
+      .site-nav { display: flex; align-items: center; gap: 28px; margin-left: 52px; }
+      .site-nav-item { border: 0; background: transparent; color: #7d857d; font-size: 12px; padding: 31px 0 28px; border-bottom: 2px solid transparent; }
+      .site-nav-item:hover, .site-nav-item.active { color: var(--ink); border-bottom-color: var(--red); }
+      .top-actions { margin-left: auto; }
+      .header-cta { border: 1px solid var(--ink); background: var(--ink); color: #fffdf8; padding: 10px 14px; font-size: 11px; font-weight: 600; }
+      .main-content { width: 100%; }
+      .page-wrap { max-width: 1240px; padding-left: 6.5vw; padding-right: 6.5vw; }
+      .intake-grid { grid-template-columns: minmax(0,1.25fr) minmax(330px,.75fr); }
+      @media (max-width: 900px) { .site-nav { gap: 15px; margin-left: 25px; } .topbar { padding: 0 28px; } .page-wrap { padding-left: 30px; padding-right: 30px; } }
+      @media (max-width: 650px) { .topbar { height: auto; min-height: 62px; padding: 12px 18px; flex-wrap: wrap; gap: 10px; } .site-nav { order: 3; width: 100%; overflow: auto; gap: 18px; margin: 0; } .site-nav-item { padding: 7px 0 8px; white-space: nowrap; } .top-actions { display: none; } .page-wrap { padding-left: 18px; padding-right: 18px; } }
+      .evidence-queue { display: grid; gap: 6px; margin-top: 10px; }
+      .evidence-file { display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--line); padding-top: 7px; color: #6e786f; font: 10px 'DM Mono'; }
+      .file-number { color: var(--red); } .file-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .file-size { color: #a1a79f; }
+      .file-status.error { color: #a7503e; } .file-status.success { color: var(--green); } .dragging { background: #f0f4e7 !important; border-color: var(--green); }
+      .transformation-strip { display: grid; grid-template-columns: 1fr 100px 1fr; gap: 18px; align-items: center; background: #ebe9e1; border: 1px solid var(--line); padding: 18px; margin-bottom: 17px; }
+      .strip-label { display: flex; justify-content: space-between; color: #656e66; font: 10px 'DM Mono'; letter-spacing: .5px; margin-bottom: 10px; } .strip-label span { color: #9ba19a; }
+      .original-preview, .neutral-preview { min-width: 0; } .original-pack, .neutral-pack { height: 230px; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; }
+      .original-pack { background: #c9a34d; color: #fffbea; box-shadow: inset 0 0 0 12px rgba(255,255,255,.12); transform: rotate(-2deg); } .original-pack strong { font: 700 25px 'Space Grotesk'; line-height: .8; } .original-pack em { font: italic 29px Georgia; align-self: center; color: #f8e6af; } .original-pack small { font: 700 10px 'DM Mono'; } .original-pack b { align-self: flex-end; background: #fffbea; color: #26372f; padding: 6px; font: 10px 'DM Mono'; }
+      .neutral-pack { background: #faf9f3; border: 1px solid #28302e; color: #202927; position: relative; } .neutral-pack:before { content: ''; position: absolute; inset: 9px; border: 1px solid #9ca29b; pointer-events: none; } .neutral-title { font: 11px 'DM Mono'; line-height: 1.1; } .neutral-title b { font-size: 19px; } .neutral-facts { display: grid; gap: 5px; font: 700 13px 'Space Grotesk'; } .neutral-pack small { font: 10px 'DM Mono'; }
+      .transform-arrow { text-align: center; color: #858c84; } .transform-arrow span { display: block; font: 9px 'DM Mono'; writing-mode: vertical-rl; transform: rotate(180deg); margin: auto auto 10px; } .transform-arrow strong { font-size: 24px; color: var(--ink); }
+      .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; } .detail-card, .evidence-card { background: var(--panel); border: 1px solid var(--line); padding: 24px; } .detail-card h2, .evidence-card h2 { font: 600 20px 'Space Grotesk'; margin: 9px 0 14px; } .detail-card ul { margin: 0; padding-left: 18px; color: #737b73; font-size: 12px; line-height: 1.65; } .unknown-card { background: #f0f0e9; } .evidence-card { margin-top: 16px; } .source-stamp { color: var(--green); font: 9px 'DM Mono'; } .evidence-row { display: grid; grid-template-columns: 145px 1fr 130px; gap: 15px; border-top: 1px solid var(--line); padding: 14px 0; font-size: 11px; } .evidence-row strong { font-weight: 600; } .evidence-row span { color: #707970; } .evidence-row em { color: #a0a69f; font: 9px 'DM Mono'; text-align: right; }
+      .claim-status.unsupported { background: #f6d4cb; color: #a7503e; } .bad-text { color: #a7503e; }
+      .loading-modal { display: none; position: fixed; inset: 0; z-index: 20; background: rgba(24,32,31,.32); place-items: center; padding: 20px; } .loading-modal.visible { display: grid; } .loading-panel { width: min(430px, 100%); background: var(--paper); border: 1px solid var(--ink); padding: 28px; box-shadow: 8px 8px 0 rgba(24,32,31,.14); } .loading-panel h2 { font: 600 25px 'Space Grotesk'; margin: 8px 0; } .loading-panel p { color: #737b73; font-size: 12px; } .loading-list { border-top: 1px solid var(--line); margin-top: 22px; } .loading-step { border-bottom: 1px solid var(--line); padding: 10px 0 10px 22px; color: #a0a69f; font: 11px 'DM Mono'; position: relative; } .loading-step:before { content: '○'; position: absolute; left: 0; } .loading-step.current { color: var(--ink); } .loading-step.current:before { content: '•'; color: var(--red); } .loading-step.done { color: var(--green); } .loading-step.done:before { content: '✓'; } .loading-panel small { display: block; color: #929991; font-size: 10px; line-height: 1.45; margin-top: 16px; }
+      @media (max-width: 700px) { .transformation-strip, .detail-grid { grid-template-columns: 1fr; } .transform-arrow span { writing-mode: initial; transform: none; margin: 0 0 4px; } .transform-arrow strong { display: block; transform: rotate(90deg); } .original-pack, .neutral-pack { height: 210px; } .evidence-row { grid-template-columns: 1fr; gap: 5px; } .evidence-row em { text-align: left; } }
+    </style>
+    <style>
+      .site-footer { max-width: 1240px; margin: 0 auto; padding: 22px 6.5vw 30px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 20px; color: #8c938b; font-size: 11px; }
+      .site-footer nav { display: flex; gap: 18px; } .site-footer button { border: 0; background: transparent; color: #6f786f; font-size: 11px; padding: 0; } .site-footer button:hover { color: var(--ink); }
+    </style>
+    <style>
+      .compact-result { align-items: start; }
+      .compact-transformation { margin-bottom: 14px; }
+      .original-source-card { height: 230px; background: #dfe0d6; border: 1px solid #c7c9bf; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; color: #34403a; }
+      .original-source-card strong { font: 600 20px 'Space Grotesk'; max-width: 260px; } .original-source-card span { color: #667067; font-size: 12px; line-height: 1.45; max-width: 300px; } .original-source-card small { color: #929991; font: 9px 'DM Mono'; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .compact-disclosure { background: transparent; } .compact-disclosure summary { list-style: none; cursor: pointer; border: 1px solid var(--line); background: var(--panel); padding: 16px 20px; font: 600 14px 'Space Grotesk'; display: flex; justify-content: space-between; align-items: center; } .compact-disclosure summary::-webkit-details-marker { display: none; } .compact-disclosure summary:after { content: '+'; font: 18px 'DM Mono'; color: #929991; } .compact-disclosure[open] summary:after { content: '−'; } .compact-disclosure summary span { margin-left: auto; margin-right: 18px; color: #9aa19a; font: 10px 'DM Mono'; } .compact-disclosure .claims-card, .compact-disclosure .evidence-card { border-top: 0; }
+      .source-image-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; } .source-image { display: block; border: 1px solid var(--line); background: #f0eee5; text-decoration: none; color: var(--ink); } .source-image img { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; background: #deded4; } .source-image span { display: block; padding: 8px; color: #737b73; font-size: 10px; line-height: 1.3; }
+      .claim-empty { color: #858e85; font-size: 12px; padding: 15px 0; }
+      @media (max-width: 700px) { .source-image-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#top" aria-label="RawLabel home">
+          <span class="brand-mark">R</span>
+          <span>rawlabel<span class="brand-dot">.</span></span>
+        </a>
+
+        <div class="side-section-label">Workspace</div>
+        <nav class="side-nav" aria-label="Primary navigation">
+          <button class="nav-item active" data-view="analyze"><span class="nav-icon">⌁</span> Analyze</button>
+          <button class="nav-item" data-view="library"><span class="nav-icon">▤</span> My scans <span class="nav-count">12</span></button>
+        </nav>
+
+        <div class="side-section-label">Learn</div>
+        <nav class="side-nav" aria-label="Learning navigation">
+          <button class="nav-item" data-view="claims"><span class="nav-icon">◎</span> Claim glossary</button>
+          <button class="nav-item" data-view="how"><span class="nav-icon">?</span> How it works</button>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="mini-note">
+            <span class="mini-note-icon">✦</span>
+            <div><strong>Stay curious.</strong><br /><span>Marketing is a point of view, not a fact.</span></div>
+          </div>
+          <div class="user-row"><span class="avatar">AR</span><span><strong>Alex Reed</strong><small>Free workspace</small></span><span class="more">•••</span></div>
+        </div>
+      </aside>
+
+      <main class="main-content" id="top">
+        <header class="topbar">
+          <a class="site-brand" href="#top"><span class="brand-mark">R</span><span>rawlabel<span class="brand-dot">.</span></span></a>
+          <nav class="site-nav" aria-label="Website navigation">
+            <button class="site-nav-item active" data-view="analyze">Analyze</button>
+            <button class="site-nav-item" data-view="library">My scans</button>
+            <button class="site-nav-item" data-view="claims">Claim glossary</button>
+            <button class="site-nav-item" data-view="how">How it works</button>
+          </nav>
+          <div class="top-actions"><button class="help-button">About RawLabel</button><button class="header-cta" data-view="analyze">＋ Start a scan</button></div>
+        </header>
+
+        <section class="page-wrap view active-view" id="analyze-view">
+          <div class="intro-row">
+            <div>
+              <p class="eyebrow">MARKETING → REALITY</p>
+              <h1>What are they <em>actually</em> selling?</h1>
+              <p class="lede">Upload a product photo or paste a listing. We’ll turn the polished pitch into a clear, useful label.</p>
+            </div>
+            <div class="scan-meta"><span class="status-pulse"></span> AI-assisted analysis <span class="meta-divider"></span> Food &amp; drink</div>
+          </div>
+
+          <section class="intake-grid">
+            <div class="upload-panel" id="drop-zone">
+              <div class="upload-topline"><span class="panel-kicker">01 / SOURCE</span><button class="text-button" id="clear-button">Clear</button></div>
+              <div class="upload-content">
+                <div class="upload-icon">↥</div>
+                <h2>Drop a product photo here</h2>
+                <p>Front, back, or a screenshot of the listing</p>
+                <label class="primary-button" for="file-input"><span>＋</span> Choose image</label>
+                <input id="file-input" type="file" accept="image/*" multiple hidden />
+                <span class="upload-hint">JPG, PNG or WEBP · up to 10 MB</span>
+              </div>
+              <div class="or-row"><span></span> or <span></span></div>
+              <div class="url-row"><span class="url-icon">↗</span><input id="url-input" type="url" placeholder="Paste a product URL" /><button id="url-button" aria-label="Analyze URL">Analyze</button></div>
+              <div class="file-status" id="file-status" aria-live="polite"></div>
+              <div class="evidence-queue" id="evidence-queue" aria-live="polite"></div>
+            </div>
+
+            <div class="sample-panel">
+              <div class="sample-topline"><span class="panel-kicker">TRY A SAMPLE</span><span class="sample-label">Example scan</span></div>
+              <button class="product-shot" id="sample-button" aria-label="Load sample product analysis">
+                <div class="package-shadow"></div>
+                <div class="product-pack"><span class="pack-brand">FIELD<br />DAY</span><span class="pack-scribble">protein<br />bar</span><span class="pack-flavor">PEANUT BUTTER<br /><small>with sea salt</small></span><span class="pack-weight">50 g</span></div>
+                <span class="scan-corner corner-tl"></span><span class="scan-corner corner-tr"></span><span class="scan-corner corner-bl"></span><span class="scan-corner corner-br"></span>
+                <span class="tap-hint">Click to load sample <span>↗</span></span>
+              </button>
+              <div class="sample-caption"><div><strong>Field Day Protein Bar</strong><span>Peanut butter · 50 g</span></div><span class="sample-arrow">↗</span></div>
+            </div>
+          </section>
+
+          <div class="recent-header"><div><span class="section-kicker">02 / RECENT SCANS</span><h2>Pick up where you left off</h2></div><button class="quiet-button">View all <span>→</span></button></div>
+          <section class="recent-grid">
+            <button class="recent-card" data-recent="protein"><span class="recent-thumb thumb-bar">P<span>BAR</span></span><span class="recent-info"><strong>Field Day Protein Bar</strong><small>Scanned today · 2 min ago</small></span><span class="score-chip score-amber">62</span><span class="card-arrow">→</span></button>
+            <button class="recent-card" data-recent="juice"><span class="recent-thumb thumb-juice">100<span>%</span></span><span class="recent-info"><strong>Sunrise Orange Juice</strong><small>Scanned yesterday</small></span><span class="score-chip score-green">78</span><span class="card-arrow">→</span></button>
+            <button class="recent-card" data-recent="cereal"><span class="recent-thumb thumb-cereal">OAT</span><span class="recent-info"><strong>Good Grain Oat Crunch</strong><small>Scanned 3 days ago</small></span><span class="score-chip score-red">44</span><span class="card-arrow">→</span></button>
+          </section>
+        </section>
+
+        <section class="page-wrap view" id="result-view">
+          <button class="back-button" id="back-button">← Back to analyze</button>
+          <div class="result-header"><div><p class="eyebrow">SCAN COMPLETE · FOOD &amp; DRINK</p><h1>Field Day <em>Protein Bar</em></h1><p class="lede">Peanut butter · 50 g · ₹120</p></div><button class="outline-button" id="new-scan">＋ New scan</button></div>
+          <section class="transformation-strip" aria-label="Original product to neutral Raw Label transformation">
+            <div class="original-preview"><div class="strip-label">ORIGINAL PRESENTATION <span>Marketing emphasis</span></div><div class="original-pack"><strong>FIELD<br />DAY</strong><em>protein<br />bar</em><small>PEANUT BUTTER<br />with sea salt</small><b>10g protein</b></div></div>
+            <div class="transform-arrow"><span>MARKETING REMOVED</span><strong>-></strong></div>
+            <div class="neutral-preview"><div class="strip-label">RAW LABEL VIEW <span>Verified facts only</span></div><div class="neutral-pack" aria-label="Neutral product visual showing verified product facts"><span class="neutral-title">FIELD DAY<br /><b>PROTEIN BAR</b></span><div class="neutral-facts"><strong>210 kcal</strong><strong>10g protein</strong><strong>8g total sugar</strong></div><small>50g / serving</small></div></div>
+          </section>
+          <div class="result-layout">
+            <div class="result-main">
+              <section class="truth-card"><div class="card-heading"><div><span class="section-kicker">THE RAW LABEL</span><h2>Here’s what you’re actually buying</h2></div><span class="verified">✓ Evidence matched</span></div><div class="nutrition-grid"><div><span>Protein</span><strong>10<small>g</small></strong><em>per bar</em></div><div><span>Energy</span><strong>210<small>kcal</small></strong><em>per bar</em></div><div><span>Total sugar</span><strong>8<small>g</small></strong><em>per bar</em></div><div><span>Fiber</span><strong>3<small>g</small></strong><em>per bar</em></div></div><div class="ingredient-row"><span class="ingredient-label">FIRST INGREDIENTS</span><strong>Glucose syrup</strong><span>·</span><strong>Peanuts</strong><span>·</span><strong>Whey protein concentrate</strong><span>·</span><strong>Oats</strong></div></section>
+              <section class="claims-card"><div class="card-heading"><div><span class="section-kicker">MARKETING → REALITY</span><h2>What deserves your attention</h2></div><button class="filter-button">All claims <span>⌄</span></button></div><div class="claim-row"><span class="claim-status good">✓</span><div><strong>“10g Protein”</strong><small>The number checks out on the nutrition panel.</small></div><span class="claim-verdict good-text">Accurate</span></div><div class="claim-row"><span class="claim-status caution">!</span><div><strong>“Healthy snack”</strong><small>Subjective. It is calorie-dense for its size.</small></div><span class="claim-verdict caution-text">Needs context</span></div><div class="claim-row"><span class="claim-status caution">!</span><div><strong>“No added sugar”</strong><small>True, but glucose syrup still contributes to total sugar.</small></div><span class="claim-verdict caution-text">Read closely</span></div></section>
+            </div>
+            <aside class="result-side"><section class="transparency-card"><div class="score-top"><span class="section-kicker">MARKETING TRANSPARENCY</span><span class="score-badge">62<span>/100</span></span></div><div class="score-meter"><span></span></div><p>Clear enough to understand, but the front of pack puts protein ahead of the full calorie picture.</p><div class="score-breakdown"><div><span>Claim specificity</span><strong>72</strong></div><div><span>Important info visibility</span><strong>48</strong></div><div><span>Serving-size clarity</span><strong>66</strong></div></div></section><section class="notice-card"><span class="notice-icon">!</span><div><strong>Worth noticing</strong><p>Protein contributes only 19% of this bar’s calories. Fat and carbohydrates do most of the work.</p></div></section><button class="share-button">Share this raw label <span>↗</span></button></aside>
+          </div>
+        </section>
+
+        <section class="page-wrap view simple-view" id="library-view"><p class="eyebrow">WORKSPACE</p><h1>Your <em>scan library</em></h1><p class="lede">Every product you’ve looked at, in one place.</p><div class="empty-library"><span>▤</span><h2>12 scans waiting for you</h2><p>Choose a recent scan from Analyze to see its raw label.</p><button class="primary-button" id="library-action">Open recent scans</button></div></section>
+        <section class="page-wrap view simple-view" id="claims-view"><p class="eyebrow">REFERENCE</p><h1>Claim <em>glossary</em></h1><p class="lede">A plain-language guide to the phrases used to sell food.</p><div class="glossary-grid"><div><strong>High protein</strong><span>A relative claim. Always check grams per serving and per calorie.</span></div><div><strong>No added sugar</strong><span>Does not mean sugar-free. Ingredients like syrups may still matter.</span></div><div><strong>Natural</strong><span>Often loosely defined. Look at the ingredient list for the useful detail.</span></div></div></section>
+        <section class="page-wrap view simple-view" id="how-view"><p class="eyebrow">THE METHOD</p><h1>How RawLabel <em>thinks</em></h1><p class="lede">We put the loudest claim next to the quietest evidence.</p><div class="method-steps"><div><span>01</span><strong>Extract</strong><p>Read the pack, listing, ingredients, and nutrition panel.</p></div><div><span>02</span><strong>Compare</strong><p>Match marketing claims to what the product actually says.</p></div><div><span>03</span><strong>Translate</strong><p>Surface the tradeoffs in plain language, without a good/bad verdict.</p></div></div></section>
+        <footer class="site-footer"><span>RawLabel replaces persuasion with information.</span><nav><button data-view="how">How it works</button><button id="privacy-button">Privacy</button><button id="terms-button">Terms &amp; disclaimer</button></nav></footer>
+      </main>
+    </div>
+    <div class="loading-modal" id="loading-modal" role="status" aria-live="polite" aria-label="Product analysis in progress">
+      <div class="loading-panel"><span class="eyebrow">ANALYSIS IN PROGRESS</span><h2>Reading the product, not the pitch.</h2><p>Source: <strong data-loading-source>Uploaded product image</strong></p><div class="loading-list"><div class="loading-step">Reading product information</div><div class="loading-step">Extracting ingredients</div><div class="loading-step">Extracting nutrition</div><div class="loading-step">Identifying marketing claims</div><div class="loading-step">Comparing claims with evidence</div><div class="loading-step">Creating Raw Label</div></div><small>Facts without evidence will be shown as unknown.</small></div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

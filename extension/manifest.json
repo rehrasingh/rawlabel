@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "RawLabel",
+  "version": "0.1.0",
+  "description": "See the product page beyond its marketing claims.",
+  "permissions": ["activeTab", "scripting", "sidePanel", "storage"],
+  "host_permissions": ["http://localhost:4173/*", "http://127.0.0.1:4173/*"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": { "default_title": "Analyze with RawLabel" },
+  "side_panel": { "default_path": "sidepanel.html" }
+}
